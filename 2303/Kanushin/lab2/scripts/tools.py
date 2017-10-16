@@ -5,9 +5,10 @@ class Cmd:
     def __init__(self):
         pass
 
-    start = 'start'
+    status = 'status'
     exit = 'exit'
     repair = 'repair'
+    print_log = 'log'
 
 
 class Topic:
@@ -15,6 +16,7 @@ class Topic:
         pass
 
     damaged = 'damaged'
+    ruined = 'ruined'
 
 
 def log(self, msg, level=0):

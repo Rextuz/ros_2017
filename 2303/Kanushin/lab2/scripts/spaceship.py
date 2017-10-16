@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import random
+import signal
 from threading import Thread
 from time import sleep
 
@@ -8,23 +9,24 @@ import rospy
 from std_msgs.msg import String
 
 import lab2.srv as srv
-from tools import log
+from tools import log, Topic
 
 TICK = 5
 
 
 class Module:
-    hp_threshold = 50
+    hp_threshold = 80
     hp_max = 100
     msg_frequency = 10
 
     def __init__(self, name):
-        self.name = name
+        self.name = name.lower()
         self._hp = self.hp_max
         self.sending_sos = False
-        log(self, 'Module {}'.format(self.name))
+        log(self, 'Successful init')
 
-        self.pub = rospy.Publisher('damaged', String, queue_size=32)
+        self.pub_damaged = rospy.Publisher(Topic.damaged, String, queue_size=32)
+        self.pub_ruined = rospy.Publisher(Topic.ruined, String, queue_size=32)
 
     @property
     def hp(self):
@@ -35,6 +37,15 @@ class Module:
 
     def take_damage(self, damage):
         self._hp -= damage
+
+        # if no hp left the module dies and stops sending signals
+        if self.hp < 0:
+            self._hp = 0
+            self.sending_sos = False
+            log(self, 'Module is ruined', level=2)
+            self.pub_ruined.publish(self.name)
+            return
+
         log(self, 'Took {} damage. {} hp.'.format(damage, self.hp), level=1)
         if self._hp < self.hp_threshold:
             if not self.sending_sos:
@@ -45,7 +56,7 @@ class Module:
             self.sending_sos = True
             while self.hp < self.hp_threshold and self.sending_sos:
                 log(self, 'Asking for help.')
-                self.pub.publish(self.name)
+                self.pub_damaged.publish(self.name)
                 sleep(self.msg_frequency)
 
         Thread(target=sos_signal).start()
@@ -99,13 +110,22 @@ class Spaceship:
                 module_damaged = random.choice(self._modules)
                 module_damaged.take_damage(damage_received)
 
-        log(self, 'Critical damage, shutting down.', level=2)
+        log(self, 'Critical damage.', level=2)
+        self.halt()
+
+    def halt(self, sig=None, frame=None):
+        if sig or frame:
+            log(self, 'Terminated by SIGINT.')
+            exit(0)
+
+        log(self, 'Shutting down.')
         for mod in self._modules:
             mod.halt()
 
     def can_fly(self):
         dead_modules = [m for m in self._modules if not m.is_working()]
-        log(self, '{} dead modules'.format(len(dead_modules)))
+        if dead_modules:
+            log(self, '{} dead modules'.format(len(dead_modules)))
         return len(dead_modules) < self.n_modules_critical
 
 
@@ -117,4 +137,5 @@ if __name__ == "__main__":
     spaceship.add_module(Module('Engine'))
     spaceship.add_module(Module('Cockpit'))
     spaceship.add_module(Module('Thruster'))
+    signal.signal(signal.SIGINT, spaceship.halt)
     spaceship.start()
