@@ -1,0 +1,4 @@
+<launch>
+  <include file="$(find treasure_hunter)/launch/move_base_gmapping_5cm.launch"/>
+  <include file="$(find treasure_hunter)/launch/global_map.launch"/>
+</launch>
