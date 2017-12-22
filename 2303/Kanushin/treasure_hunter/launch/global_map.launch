@@ -13,11 +13,11 @@
         #All standard costmap_2d parameters as in move_base, other than BoundedExploreLayer
         <rosparam ns="explore_costmap" subst_value="true">
             footprint: [[0.1, 0.0], [0.0, 0.1], [-0.1, 0.0], [0.0, -0.1]]
-            robot_radius: 0.15
+            robot_radius: 0.25
 
             transform_tolerance: 0.5
-            update_frequency: 5.0
-            publish_frequency: 5.0
+            update_frequency: 0.5
+            publish_frequency: 0.5
 
             #must match incoming static map
             global_frame: map
@@ -42,7 +42,7 @@
                 subscribe_to_updates: true
 
             explore_boundary:
-                resize_to_boundary: false
+                resize_to_boundary: true
                 frontier_travel_point: middle
                 #set to false for gmapping, true if re-exploring a known area
                 explore_clear_space: false
