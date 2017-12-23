@@ -97,7 +97,7 @@ Visualization Manager:
       Buffer Length: 1
       Class: rviz/Path
       Color: 255; 0; 0
-      Enabled: true
+      Enabled: false
       Head Diameter: 0.300000012
       Head Length: 0.200000003
       Length: 0.300000012
@@ -115,7 +115,7 @@ Visualization Manager:
       Shaft Length: 0.100000001
       Topic: /move_base_node/NavfnROS/plan
       Unreliable: false
-      Value: true
+      Value: false
     - Alpha: 1
       Arrow Length: 0.300000012
       Axes Length: 0.300000012
@@ -246,7 +246,7 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Scale: 19.7382278
+      Scale: 19.4013691
       Target Frame: base_link
       Value: TopDownOrtho (rviz)
       X: 0
@@ -268,5 +268,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1276
-  X: 0
-  Y: 25
+  X: 89
+  Y: 60
