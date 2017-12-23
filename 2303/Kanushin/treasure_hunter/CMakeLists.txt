@@ -10,6 +10,11 @@ project(treasure_hunter)
 find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
+  sensor_msgs
+  tf
+  laser_geometry
+  message_filters
+  visualization_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -105,6 +110,14 @@ catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES treasure_hunter
 #  CATKIN_DEPENDS rospy std_msgs
+CATKIN_DEPENDS   
+  rospy
+  std_msgs
+  sensor_msgs
+  tf
+  laser_geometry
+  message_filters
+  visualization_msgs
 #  DEPENDS system_lib
 )
 
@@ -118,6 +131,10 @@ include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
 )
+
+
+add_executable(scan_analyzer src/scan_analyzer.cpp)
+target_link_libraries(scan_analyzer ${catkin_LIBRARIES})
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
