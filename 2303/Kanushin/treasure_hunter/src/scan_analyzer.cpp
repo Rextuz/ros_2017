@@ -46,8 +46,8 @@ void callback(const nav_msgs::Odometry::ConstPtr& msg)
 }
 void addMarker(float x, float y)
 {
-        marker.header.frame_id = "map";
-        marker.header.stamp = ros::Time(0);//ros::Time::now();
+        marker.header.frame_id = "base_link";
+        marker.header.stamp = ros::Time::now();//ros::Time::now();
         
         // Set the namespace and id for this marker.  This serves to create a unique ID
         // Any marker sent with the same namespace and id will overwrite the old one
@@ -62,8 +62,8 @@ void addMarker(float x, float y)
         
         // Set the pose of the marker.  This is a full 6DOF pose relative to the frame/time specified in the header
       
-        marker.pose.position.x = odmsg.pose.pose.position.x + x;
-        marker.pose.position.y = odmsg.pose.pose.position.y + y;
+        marker.pose.position.x = x;//odmsg.pose.pose.position.x;
+        marker.pose.position.y = y;//odmsg.pose.pose.position.y;
 
         marker.pose.position.z = 0;
         marker.pose.orientation.x = 0.0;
@@ -83,8 +83,11 @@ void addMarker(float x, float y)
         marker.color.a = 1.0;
 
         marker.lifetime = ros::Duration();
+       
+	
+	pubMarker.publish(marker);
 
-        pubMarker.publish(marker);
+      
 }
 
   void scanCallback (const sensor_msgs::LaserScan::ConstPtr& scan_in)
@@ -103,29 +106,26 @@ void addMarker(float x, float y)
         return;
     }
 
-
-    for( int i = 0; i < 100; i++)
+    int i = 0;
+    float x;
+    float y;
+    for(  i = 0; i < 100; i++)
     {
        if (scan_in->intensities[i] == 2) 
        {
 	std::cout<<"I see the treasure"<<std::endl;
- 	oneMarker++;
-        
-        float x = cloud.points[i].x;
-        float y = cloud.points[i].y;
-        if(oneMarker<100)
-	{
-	   addMarker(x,y);
-	}
-	
-	if (oneMarker>1000)
-	{
-	  oneMarker = 0;
-	}
-	count ++; 
-            
+        x = cloud.points[i].x;
+        y = cloud.points[i].y;
+	oneMarker = 1;
+	break;
        }
-    }  
+    } 
+    if (oneMarker == 1)
+    {
+	addMarker(x,y);
+	oneMarker = 0;
+        ros::Duration(10).sleep();
+    } 
   }
 };
 
