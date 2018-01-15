@@ -1,0 +1,123 @@
+\documentclass[14pt, a4paper]{extarticle}
+
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+
+\usepackage{geometry}
+\geometry{
+	right=0.39in,
+	left=1.18in,
+	top=0.3in,
+	bottom=0.49in
+}
+
+\usepackage{indentfirst}
+\setlength\parindent{1.25cm}
+
+\usepackage{titlesec}
+\titlespacing*{\section}{0pt}{10pt}{0pt}
+
+\usepackage{titlesec}
+\titleformat{\section}{\normalfont\bfseries}{}{0pt}{}
+\titleformat{\subsection}{\normalfont\itshape}{}{0pt}{}	
+	
+\usepackage{setspace}
+\onehalfspacing
+
+\usepackage{hyperref}
+
+\usepackage{listings}
+\usepackage{xcolor}
+\lstset { %
+	language=C++,
+	backgroundcolor=\color{black!5}, % set backgroundcolor
+	basicstyle=\footnotesize,% basic font setting
+}
+
+\def \deptName {МО ЭВМ}
+\def \subjName {Системы реального времени на основе Linux}
+\def \labNo {2}
+\def \labName {Использование сервисов}
+
+\def \groupNo {2303}
+\def \studName {Канушин М.С.}
+\def \proffName {Филатов А.Ю.}
+
+\begin{document}
+	
+	\begin{titlepage}
+	\begin{center}
+		\textbf{МИНОБРНАУКИ РОССИИ \\
+		САНКТ-ПЕТЕРБУРГСКИЙ ГОСУДАРСТВЕННЫЙ \\	
+		ЭЛЕКТРОТЕХНИЧЕСКИЙ УНИВЕРСИТЕТ \\
+		<<ЛЭТИ>> ИМ. В.И. УЛЬЯНОВА (ЛЕНИНА) \\
+		Кафедра \deptName}
+		
+		\topskip0pt
+		\vspace*{\fill}
+			\bigskip\bigskip\bigskip\bigskip\bigskip
+			\bigskip\bigskip\bigskip\bigskip\bigskip
+			\textbf{ОТЧЕТ \\
+			по лабораторной работе №\labNo \\
+			по дисциплине <<\subjName>> \\
+			Тема: \labName}
+		\vspace*{\fill}
+		
+		\vspace*{\fill}
+		\begin{tabular*}{\textwidth}{l @{\extracolsep{\fill}} r r}
+			Студент гр. \groupNo & \noindent\rule{4cm}{0.4pt} & \studName \\
+			Преподаватель        & \noindent\rule{4cm}{0.4pt} & \proffName \\
+		\end{tabular*}
+	
+		\bigskip\bigskip\bigskip
+		\bigskip\bigskip\bigskip
+		
+		Санкт-Петербург \\
+		2018
+	\end{center}
+	\end{titlepage}
+	\setcounter{page}{2}
+	
+	\section{Цель работы.}
+	Разработать программу, моделирующую произвольную систему с использованием сервисов.
+
+	\section{Описание системы.}
+	Космический корабль состоит из модулей. Корабль может периодически получать повреждения, при этом ущерб наносится случайному его модулю. При сильном повреждении модуль начинает отправлять сообщения с просьбой о ремонте. Если hp модуля упало до 0, то он не подлежит восстановлению. Корабль также обладает сервисом ремонта, который получает имя модуля, производит ремонт и возвращает 0, если операции прошла успешно, 1 - если модуль не подлежит ремонту и -1 - если такого модуля на корабле нет. При полном отказе нескольких модулей (по умолчанию 3х) корабль отключается.
+	
+	Терминал при запуске ожидает запуска сервиса ремонта на корабле. При получении информации от модулей, терминал заносит информацию в локальное хранилище для последующей обработки пользователем.
+	
+	\section{Команды оператора}
+	
+	\begin{itemize}
+		\item log - выводит последние полезные сообщения терминала.
+		\item status - выводит информацию о состоянии поврежденных и не подлежащих восстановлению модулей из локального хранилища.
+		\item repair <module\_name> - производит вызов сервиса и попытку ремонта.
+	\end{itemize}
+	
+	\section{Спецификация программы}
+
+	\begin{itemize}
+		\item Топики
+			\begin{itemize}
+				\item damaged
+				\item ruined
+			\end{itemize}
+		\item Сервисы
+			\begin{itemize}
+				\item repair\_service
+			\end{itemize}
+		\item Классы
+			\begin{itemize}
+				\item spaceship.Spaceship - космический корабль
+				\item spaceship.Module - модуль космического корабля
+				\item terminal.Terminal - терминал
+			\end{itemize}
+	\end{itemize}
+
+	\section{Выводы.}
+	В ходе выполнения данной лабораторной работы были изучена структура проекта в среде ROS и разработана программа, использующая технологию publisher-subscriber.
+	
+	\section{Код программы.}
+	Код программы представлен в репозитории по адресу \url{https://github.com/Rextuz/ros_2017/tree/master/2303/Kanushin/lab2}
+	
+\end{document}
