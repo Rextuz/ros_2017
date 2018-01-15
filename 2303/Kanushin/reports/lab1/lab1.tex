@@ -1,0 +1,289 @@
+\documentclass[14pt, a4paper]{extarticle}
+
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+
+\usepackage{geometry}
+\geometry{
+	right=0.39in,
+	left=1.18in,
+	top=0.3in,
+	bottom=0.49in
+}
+
+\usepackage{indentfirst}
+\setlength\parindent{1.25cm}
+
+\usepackage{titlesec}
+\titlespacing*{\section}{0pt}{10pt}{0pt}
+
+\usepackage{titlesec}
+\titleformat{\section}{\normalfont\bfseries}{}{0pt}{}
+\titleformat{\subsection}{\normalfont\itshape}{}{0pt}{}	
+	
+\usepackage{setspace}
+\onehalfspacing
+
+\usepackage{listings}
+\usepackage{xcolor}
+\lstset { %
+	language=C++,
+	backgroundcolor=\color{black!5}, % set backgroundcolor
+	basicstyle=\footnotesize,% basic font setting
+}
+
+\def \deptName {МО ЭВМ}
+\def \subjName {Системы реального времени на основе Linux}
+\def \labNo {1}
+\def \labName {Простая программа-писатель}
+
+\def \groupNo {2303}
+\def \studName {Канушин М.С.}
+\def \proffName {Филатов А.Ю.}
+
+\begin{document}
+	
+	\begin{titlepage}
+	\begin{center}
+		\textbf{МИНОБРНАУКИ РОССИИ \\
+		САНКТ-ПЕТЕРБУРГСКИЙ ГОСУДАРСТВЕННЫЙ \\	
+		ЭЛЕКТРОТЕХНИЧЕСКИЙ УНИВЕРСИТЕТ \\
+		<<ЛЭТИ>> ИМ. В.И. УЛЬЯНОВА (ЛЕНИНА) \\
+		Кафедра \deptName}
+		
+		\topskip0pt
+		\vspace*{\fill}
+			\bigskip\bigskip\bigskip\bigskip\bigskip
+			\bigskip\bigskip\bigskip\bigskip\bigskip
+			\textbf{ОТЧЕТ \\
+			по лабораторной работе №\labNo \\
+			по дисциплине <<\subjName>> \\
+			Тема: \labName}
+		\vspace*{\fill}
+		
+		\vspace*{\fill}
+		\begin{tabular*}{\textwidth}{l @{\extracolsep{\fill}} r r}
+			Студент гр. \groupNo & \noindent\rule{4cm}{0.4pt} & \studName \\
+			Преподаватель        & \noindent\rule{4cm}{0.4pt} & \proffName \\
+		\end{tabular*}
+	
+		\bigskip\bigskip\bigskip
+		\bigskip\bigskip\bigskip
+		
+		Санкт-Петербург \\
+		2018
+	\end{center}
+	\end{titlepage}
+	\setcounter{page}{2}
+	
+	\section{Цель работы.}
+	Разработать программу, моделирующую робота и лабиринт. Робот должен управляться пользователем через технологию publisher-subscriber. Робот перемещается только по свободным клеткам, перемещение через препятствия(стены) не допускается.
+
+	\section{Основные теоретические положения.}
+	У объекта класса NodeHandle
+	
+	\begin{lstlisting}
+	ros::NodeHandle <node_handle_name>;
+	\end{lstlisting}
+	
+	есть метод, реализующий механизм отправки сообщений в топик с именем <topic\_name>.
+	
+	Это делается при помощи команды
+	
+	\begin{lstlisting}
+	ros::Publisher <publisher_name> = <node_handle_name>.advertise<msg_type>("<topic_name>",<size>);
+	\end{lstlisting}
+	
+	где <topic\_name> это имя топика, через который будут общаться publisher и subscriber; а <size> - размер буфера сообщений (а треугольные скобочки после advertize - это конкретизация шаблонной функции).
+	
+	В данном случае имя топика можно получить, узнав, на какой топик подписан turtlesim\_node. Тип сообщения можно узнать, выведя информацию о топике.
+	
+	Информацию о том, из каких полей состоит сообщение можно узнать командой
+	
+	\begin{lstlisting}
+	rosmsg show <msg_type>	
+	\end{lstlisting}
+	
+	В тексте программы необходимо создать объект класса <msg\_type> и наполнить его содержимым. Информативными являются поля msg.linear.x и msg.angular.z. Остальные поля сообщения не учитываются при обработке.
+	
+	После того, как сообщение сформировано, его можно отправить в топик командой 	
+	\begin{lstlisting}
+		<publisher_name>.publish (msg)	
+	\end{lstlisting}
+		
+	В разделе может быть приведено описание исследуемых физических явлений (с иллюстрациями), основные теоретические положения (в том числе – математический аппарат, описывающий исследуемые явления), схемы измерений, сведения об используемом при проведении работы лабораторном оборудовании.
+
+	\section{Разработка программы.}
+	Для отправки сообщений роботу будет использоваться единственный топик - \textit{controller}, отвечающий за команды перемещения.
+	
+	\subsection{Узлы.}
+	\begin{itemize}
+	\item controller - узел, считывающий команды пользователя и отправляющий их в топик \textit{controller}
+	\item listener - узел, отвечающий за прием сообщений из топика \textit{controller} и производящий перемещение робота в случае, если это возможно.
+	\end{itemize}
+
+	\subsection{Классы.}
+	\begin{itemize}
+		\item KeyPublisher - класс, реализующий функциональность узла \textit{controller}
+		\item LevelMap - класс, хранящий карту лабиринта и местоположение робота на ней.
+		\item Robot - класс, реализующий функциональность робота. Робот определят свое местоположение на карте, считывает из топика команды и выполняет их в случае, если это возможно.
+	\end{itemize}
+
+	\section{Выводы.}
+	В ходе выполнения данной лабораторной работы были изучена структура проекта в среде ROS и разработана программа, использующая технологию publisher-subscriber.
+	
+	\section{Код программы.}
+	\begin{lstlisting}
+#!/usr/bin/env python
+
+import rospy
+from pynput.keyboard import Key, Listener, KeyCode
+from std_msgs.msg import String
+
+
+class KeyPublisher:
+	KEY_Q = KeyCode(char='q')
+	KEY_W = KeyCode(char='w')
+	KEY_A = KeyCode(char='a')
+	KEY_S = KeyCode(char='s')
+	KEY_D = KeyCode(char='d')
+	KEY_P = KeyCode(char='p')
+	keys = (KEY_Q, KEY_W, KEY_A, KEY_S, KEY_D, KEY_P, Key.esc)
+
+	def __init__(self, topic):
+		self.topic = topic
+		self.pub = rospy.Publisher(topic, String, queue_size=10)
+		rospy.init_node('key_talker', anonymous=True)
+
+	def start(self):
+		def __on_press(key):
+			if key in self.keys:
+				rospy.loginfo('got key %s', key)
+				if key == self.KEY_W:
+					self.pub.publish('up')
+				if key == self.KEY_S:
+					self.pub.publish('down')
+				if key == self.KEY_A:
+					self.pub.publish('left')
+				if key == self.KEY_D:
+					self.pub.publish('right')
+				if key == self.KEY_P:
+					self.pub.publish('print')
+
+		def __on_release(key):
+			if key in (Key.esc, self.KEY_Q):
+				return False
+
+		rospy.loginfo('Controller with topic `%s` launched',
+			  self.topic)
+		rospy.loginfo('w, a, s, d to move')
+		rospy.loginfo('esc, q to exit')
+		rospy.loginfo('p to print level map')
+
+		with Listener(on_press=__on_press,
+			  on_release=__on_release) as listener:
+			listener.join()
+
+
+if __name__ == '__main__':
+	try:
+		talker = KeyPublisher('controller')
+		talker.start()
+	except rospy.ROSInterruptException:
+		pass
+	\end{lstlisting}
+	
+	\begin{lstlisting}
+#!/usr/bin/env python
+
+import rospy
+import rospkg
+from std_msgs.msg import String
+
+
+class LevelMap:
+	def __init__(self, map_file):
+		self.map = []
+		with open(map_file) as f:
+			for line in f:
+				tmp = []
+				for char in line:
+					tmp.append(char)
+				self.map.append(tmp)
+
+	def free(self, x, y):
+		return self.map[x][y] == '0'
+
+	def print_map(self, x, y):
+		self.map[x][y] = '*'
+		res = '\nLevel map:\n'
+		for line in self.map:
+			res += ''.join(line)
+		res += '* - robot\n'
+		res += '1 - wall\n'
+		res += '0 - empty space\n'
+		rospy.loginfo(res)
+		self.map[x][y] = '0'
+
+
+class Robot:
+	def __init__(self, name, x=0, y=0):
+		self.name = name
+		self.x = x
+		self.y = y
+		self.map = None
+
+	def load_map(self, local_map):
+		self.map = local_map
+
+	def move(self, dx, dy):
+		new_x = self.x + dx
+		new_y = self.y + dy
+		if self.map.free(new_x, new_y):
+			rospy.loginfo('I am %s, I am moving to (%d,%d)', self.name,
+				  new_x, new_y)
+			self.x = new_x
+			self.y = new_y
+		else:
+			rospy.loginfo('I am %s, cannot move there', self.name)
+
+	def show_location(self):
+		self.map.print_map(self.x, self.y)
+
+	def subscribe(self, topic):
+		def callback(data):
+			rospy.loginfo('I am %s, my id is %s, I received %s',
+				  self.name,
+				  rospy.get_caller_id(),
+				  data.data)
+			if data.data == 'up':
+				self.move(-1, 0)
+
+			if data.data == 'left':
+				self.move(0, -1)
+
+			if data.data == 'right':
+				self.move(0, 1)
+
+			if data.data == 'down':
+				self.move(1, 0)
+
+			if data.data == 'print':
+				self.show_location()
+
+		rospy.init_node('listener', anonymous=True)
+		rospy.Subscriber(topic, String, callback)
+		rospy.spin()
+
+
+if __name__ == '__main__':
+	rospack = rospkg.RosPack()
+	res_path = rospack.get_path('lab_1') + '/res/'
+	level = LevelMap('{}map.txt'.format(res_path))
+
+	andy = Robot('Andy', 4, 3)
+	andy.load_map(level)
+	andy.subscribe('controller')
+	\end{lstlisting}
+	
+\end{document}
