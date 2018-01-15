@@ -1,0 +1,5 @@
+<launch>
+  <node name="trace" pkg="treasure_hunter" type="trace.py" respawn="true"/>
+  <node name="route_planner" pkg="treasure_hunter" type="route_planner.py" respawn="true"/>
+  <node name="my_scan_to_cloud" pkg="treasure_hunter" type="scan_analyzer" respawn="true"/>
+</launch>

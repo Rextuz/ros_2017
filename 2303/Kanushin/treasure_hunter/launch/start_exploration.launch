@@ -1,0 +1,6 @@
+<launch>
+  <include file="$(find treasure_hunter)/launch/move_base_gmapping_5cm.launch"/>
+  <include file="$(find treasure_hunter)/launch/global_map.launch"/>
+  <include file="$(find treasure_hunter)/launch/treasure_hunter.launch"/>
+  <node name="rqt_graph" pkg="rqt_graph" type="rqt_graph" respawn="true"/>
+</launch>

@@ -1,0 +1,1 @@
+roslaunch treasure_hunter start_exploration.launch
